@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -22,13 +22,15 @@ func Read(w http.ResponseWriter, r *http.Request) {
 	filename := r.URL.Path[len("/Read/")]
 	file, _ := os.ReadFile(string(filename) + ".txt")
 	p := &Page{Title: string(filename), Body: file}
-	fmt.Fprintf(w, "<h1>%s</h1>", p.Title)
+	temp, _ := template.ParseFiles("Read.html")
+	temp.Execute(w, p)
 }
 func save(w http.ResponseWriter, r *http.Request) {
 	filename := r.URL.Path[len("/Save/")]
 	p1 := &Page{Title: string(filename), Body: []byte("complete")}
 	p1.MakeFile()
-	fmt.Fprintf(w, "<h1>%s</h1>", p1.Title)
+	temp, _ := template.ParseFiles("Save.html")
+	temp.Execute(w, p1)
 }
 func main() {
 	log.Fatal(http.ListenAndServe(":8000", nil))
